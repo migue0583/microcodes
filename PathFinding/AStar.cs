@@ -9,7 +9,7 @@ public class AStar
     /// </summary>
     /// <param name="start">Indicates the starting node.</param>
     /// <param name="goal">Indicates the goal or target node</param>
-    /// <param name="gridMatrix">
+    /// <param namea="gridMatrix">
     ///     A matrix representing a grid or terran with a value of 0 (zero)
     ///     if the node is not valid (blocked) or distinct to 0, if the 
     ///     node is valid (traversable). This is not an adjacency matrix, 
@@ -143,7 +143,7 @@ public class AStar
         {
             for (int c = -1; c <= 1; c++)
             {
-                Node neighbor = new Node(node.Col + c, node.Row + r);
+                Node neighbor = new Node(node.Row + r, node.Col + c);
                 if (neighbor == node)
                 {
                     continue;
@@ -206,7 +206,7 @@ public class AStar
         {
             for (int c = 0; c < colsQty; c++)
             {
-                Node node = new Node(c, r);
+                Node node = new Node(r, c);
                 map[node] = int.MaxValue;
             }
         }
@@ -217,10 +217,10 @@ public class AStar
         public int Col;
         public int Row;
 
-        public Node(int x, int y)
+        public Node(int row, int col)
         {
-            this.Col = x;
-            this.Row = y;
+            this.Col = col;
+            this.Row = row;
         }
 
         public static bool operator== (Node a, Node b)
@@ -266,7 +266,7 @@ public class AStar
         //Starting node at row 0, column 0
         AStar.Node start = new AStar.Node(0, 0);
         //Goal node at row 4, column 2
-        AStar.Node goal = new AStar.Node(2, 4);
+        AStar.Node goal = new AStar.Node(4, 2);
 
         List<AStar.Node> path = AStar.FindPath(start, goal, gridMatrix);
         if (path != null)
