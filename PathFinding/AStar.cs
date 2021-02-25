@@ -280,8 +280,7 @@ public class AStar
         else 
         {
             Console.WriteLine("There is no path from " + start + " to " + goal);  
-        }
-            
+        }           
         Console.Read();
     }
 }
