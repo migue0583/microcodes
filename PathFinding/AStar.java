@@ -19,7 +19,7 @@ public class AStar {
 	 *         path is returned null, there is no way to reach the goal from the
 	 *         start.
 	 */
-	public static List<Node> FindPath(Node start, Node goal, int[][] gridMatrix) {
+	public static List<Node> findPath(Node start, Node goal, int[][] gridMatrix) {
 		// The quantity of rows and columns that the grid has
 		int rowsQuantity = gridMatrix.length;
 		int colsQuantity = gridMatrix[0].length;
@@ -40,7 +40,7 @@ public class AStar {
 		// path from start to n currently known.
 		Map<Node, Double> gScore = new HashMap<Node, Double>();
 		// Map with default value of Infinity
-		FillMapWithInfinity(gScore, rowsQuantity, colsQuantity);
+		fillMapWithInfinity(gScore, rowsQuantity, colsQuantity);
 		gScore.put(start, 0d);
 
 		// For node n, fScore[n] := gScore[n] + h(n).
@@ -48,21 +48,21 @@ public class AStar {
 		// how short a path from start to finish can be if it goes through n.
 		Map<Node, Double> fScore = new HashMap<Node, Double>();
 		// Map with default value of Infinity
-		FillMapWithInfinity(fScore, rowsQuantity, colsQuantity);
+		fillMapWithInfinity(fScore, rowsQuantity, colsQuantity);
 		fScore.put(start, h(start, goal));
 
 		while (!openSet.isEmpty()) {
 			// This operation can occur in O(1) time if openSet is a
 			// min-heap or a priority queue
 			// current := the node in openSet having the lowest fScore[] value
-			Node current = GetMinFromOpenSet(openSet, fScore);
+			Node current = getMinFromOpenSet(openSet, fScore);
 
 			if (current.equals(goal)) {// The goal is reached. Successful end of the algorithm.
-				return ReconstructPath(cameFrom, current);
+				return reconstructPath(cameFrom, current);
 			}
 			openSet.remove(current);
 
-			List<Node> neighborhood = GetNeighborhood(current, gridMatrix, rowsQuantity, colsQuantity);
+			List<Node> neighborhood = getNeighborhood(current, gridMatrix, rowsQuantity, colsQuantity);
 
 			for (Node neighbor : neighborhood) {
 				// d(current,neighbor) is the weight of the edge from current to neighbor
@@ -88,22 +88,22 @@ public class AStar {
 	// The d method stimates the distance
 	// to reach from node A to B, by calculating the euclidian
 	// distance between the two nodes.
-	private static Double d(Node nodeA, Node nodeB) {
-		return Math.sqrt(Math.pow(nodeB.Col - nodeA.Col, 2) + Math.pow(nodeB.Row - nodeA.Row, 2));
+	private static double d(Node nodeA, Node nodeB) {
+		return Math.sqrt(Math.pow(nodeB.col - nodeA.col, 2) + Math.pow(nodeB.row - nodeA.row, 2));
 	}
 
 	// This is the infamous Heuristic method/function.
 	// In this case, it will stimate the effort
 	// required to reach from a node to the goal
 	// as the distances between them.
-	private static Double h(Node node, Node goal) {
+	private static double h(Node node, Node goal) {
 		return d(node, goal);
 	}
 
 	// Creates a list tracing back the nodes
 	// traversed to reach the goal. This represents
 	// the path found.
-	private static List<Node> ReconstructPath(Map<Node, Node> cameFrom, Node current) {
+	private static List<Node> reconstructPath(Map<Node, Node> cameFrom, Node current) {
 		List<Node> totalPath = new ArrayList<Node>();
 		totalPath.add(current);
 
@@ -121,16 +121,16 @@ public class AStar {
 	// If the matrix has a value of 0, the node is not
 	// valid, and it is not added as a neighbor.
 	// Otherwise, it is added.
-	private static List<Node> GetNeighborhood(Node node, int[][] adyMatrix, int rowsQty, int colsQty) {
+	private static List<Node> getNeighborhood(Node node, int[][] adyMatrix, int rowsQty, int colsQty) {
 		List<Node> neighborhood = new ArrayList<Node>();
 
 		for (int r = -1; r <= 1; r++) {
 			for (int c = -1; c <= 1; c++) {
-				Node neighbor = new Node(node.Row + r, node.Col + c);
+				Node neighbor = new Node(node.row + r, node.col + c);
 				if (neighbor.equals(node)) {
 					continue;
 				}
-				if (IsValidNode(neighbor, adyMatrix, rowsQty, colsQty)) {
+				if (isValidNode(neighbor, adyMatrix, rowsQty, colsQty)) {
 					neighborhood.add(neighbor);
 				}
 			}
@@ -138,25 +138,25 @@ public class AStar {
 		return neighborhood;
 	}
 
-	private static boolean IsValidNode(Node node, int[][] gridMatrix, int rowsQty, int colsQty) {
+	private static boolean isValidNode(Node node, int[][] gridMatrix, int rowsQty, int colsQty) {
 
-		if (node.Col < 0 || node.Row < 0) {// Outside the matrix.
+		if (node.col < 0 || node.row < 0) {// Outside the matrix.
 			return false;
 		}
 
-		if (node.Col >= colsQty || node.Row >= rowsQty) {// Outside the matrix.
+		if (node.col >= colsQty || node.row >= rowsQty) {// Outside the matrix.
 			return false;
 		}
 		// Returns true if the grid matrix has a value distinct than
 		// zero in the reviewed node.
-		return gridMatrix[node.Row][node.Col] != 0;
+		return gridMatrix[node.row][node.col] != 0;
 	}
 
 	// Traverses the openSet list looking for the
 	// node with the lowest fScore value.
 	// This method would be unnecessary if the
 	// openSet where a priority queue.
-	private static Node GetMinFromOpenSet(List<Node> openSet, Map<Node, Double> fScore) {
+	private static Node getMinFromOpenSet(List<Node> openSet, Map<Node, Double> fScore) {
 		double minScore = Double.MAX_VALUE;
 		Node minNode = null;
 
@@ -172,7 +172,7 @@ public class AStar {
 	}
 
 	// Prefills each node of the grid matrix with infinity as value.
-	private static void FillMapWithInfinity(Map<Node, Double> map, int rowsQty, int colsQty) {
+	private static void fillMapWithInfinity(Map<Node, Double> map, int rowsQty, int colsQty) {
 		for (int r = 0; r < rowsQty; r++) {
 			for (int c = 0; c < colsQty; c++) {
 				Node node = new Node(r, c);
@@ -182,24 +182,24 @@ public class AStar {
 	}
 
 	static class Node {
-		public int Col;
-		public int Row;
+		public int col;
+		public int row;
 
 		public Node(int row, int col) {
-			this.Col = col;
-			this.Row = row;
+			this.col = col;
+			this.row = row;
 		}
 
 		public boolean equals(Object obj) {
 			if (obj instanceof Node) {
 				Node other = (Node) obj;
-				return this.Row == other.Row && this.Col == other.Col;
+				return this.row == other.row && this.col == other.col;
 			}
 			return false;
 		}
 
 		public String toString() {
-			return "[Row=" + Row + ", Col=" + Col + "]";
+			return "[Row=" + row + ", Col=" + col + "]";
 		}
 
 		public int hashCode() {
@@ -222,7 +222,7 @@ public class AStar {
 		// Goal node at row 4, column 2
 		AStar.Node goal = new AStar.Node(4, 2);
 
-		List<AStar.Node> path = AStar.FindPath(start, goal, gridMatrix);
+		List<AStar.Node> path = AStar.findPath(start, goal, gridMatrix);
 		if (path != null) {
 			System.out.println("This is the path from " + start + " to " + goal);
 			for (AStar.Node p : path) {
